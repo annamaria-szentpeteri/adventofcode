@@ -26,6 +26,13 @@ try
                     Console.WriteLine($"Solution for puzzle #{puzzleNumber} is {solution}");
                     break;
                 }
+            case 2:
+                {
+                    var puzzle = new Puzzle02("input01.txt");
+                    var solution = puzzle.SolvePuzzle();
+                    Console.WriteLine($"Solution for puzzle #{puzzleNumber} is {solution}");
+                    break;
+                }
             default:
                 {
                     Console.WriteLine("Invalid input. Number must be between 1-24.");
