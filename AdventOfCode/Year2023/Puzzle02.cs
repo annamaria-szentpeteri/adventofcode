@@ -2,16 +2,16 @@
 {
     internal class Puzzle02 : IPuzzle<int>
     {
-        private readonly Dictionary<string, int> _alphabeticNumbers = new (){
-            { "one", 1},
-            { "two", 2},
-            { "three", 3},
-            { "four", 4},
-            { "five", 5},
-            { "six", 6},
-            { "seven", 7},
-            { "eight", 8},
-            { "nine", 9}
+        private readonly Dictionary<string, char> _alphabeticNumbers = new (){
+            { "one", '1'},
+            { "two", '2'},
+            { "three", '3'},
+            { "four", '4'},
+            { "five", '5'},
+            { "six", '6'},
+            { "seven", '7'},
+            { "eight", '8'},
+            { "nine", '9'}
         };
         private readonly string _inputFileName = string.Empty;
 
@@ -33,7 +33,8 @@
                 if (string.IsNullOrEmpty(line))
                     continue;
 
-                line = SwapAlphabeticNumbersToDigits(line);
+                var firstAlphabeticDigit = FindFirstAlphabeticDigit(line);
+                var lastAlphabeticDigit = FindLastAlphabeticDigit(line);
 
                 char firstNumericChar = '0';
                 bool foundFirst = false;
@@ -45,13 +46,28 @@
                 {
                     if (!foundFirst && char.IsDigit(line[i]))
                     {
-                        firstNumericChar = line[i];
+                        if (firstAlphabeticDigit != null && firstAlphabeticDigit.Item2 < i)
+                        {
+                            firstNumericChar = _alphabeticNumbers[firstAlphabeticDigit.Item1];
+                        }
+                        else
+                        {
+                            firstNumericChar = line[i];
+                        }
                         foundFirst = true;
                     }
 
-                    if (!foundLast && char.IsDigit(line[line.Length - i - 1]))
+                    var indexFromBack = line.Length - i - 1;
+                    if (!foundLast && char.IsDigit(line[indexFromBack]))
                     {
-                        lastNumericChar = line[line.Length - i - 1];
+                        if (lastAlphabeticDigit != null && lastAlphabeticDigit.Item2 > indexFromBack)
+                        {
+                            lastNumericChar = _alphabeticNumbers[lastAlphabeticDigit.Item1];
+                        }
+                        else
+                        {
+                            lastNumericChar = line[indexFromBack];
+                        }
                         foundLast = true;
                     }
 
@@ -66,37 +82,38 @@
             return result;
         }
 
-        private string SwapAlphabeticNumbersToDigits(string line)
+        private Tuple<string, int>? FindFirstAlphabeticDigit(string line)
         {
             var foundAt = new List<Tuple<string, int>>();
 
-            do
+            foreach (string s in _alphabeticNumbers.Keys)
             {
-                foundAt.Clear();
+                var i = line.IndexOf(s);
 
-                foreach (string s in _alphabeticNumbers.Keys)
+                if (i != -1)
                 {
-                    var i = line.IndexOf(s);
-
-                    if (i != -1)
-                    {
-                        foundAt.Add(new Tuple<string, int>(s, i));
-                    }
-                }
-
-                if (foundAt.Count > 0)
-                {
-                    var firstWord = foundAt.OrderBy(x => x.Item2).First();
-                    var alphabeticNumber = firstWord.Item1;
-                    var index = firstWord.Item2;
-                    var number = _alphabeticNumbers[alphabeticNumber];
-
-                    line = line[..(index + 1)] + number + line[(index - 1 + alphabeticNumber.Length)..];
+                    foundAt.Add(new Tuple<string, int>(s, i));
                 }
             }
-            while (foundAt.Count > 0);
 
-            return line;
+            return foundAt.OrderBy(x => x.Item2).FirstOrDefault();
+        }
+
+        private Tuple<string, int>? FindLastAlphabeticDigit(string line)
+        {
+            var foundAt = new List<Tuple<string, int>>();
+
+            foreach (string s in _alphabeticNumbers.Keys)
+            {
+                var i = line.LastIndexOf(s);
+
+                if (i != -1)
+                {
+                    foundAt.Add(new Tuple<string, int>(s, i));
+                }
+            }
+
+            return foundAt.OrderBy(x => x.Item2).LastOrDefault();
         }
     }
 }
