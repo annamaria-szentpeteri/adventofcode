@@ -15,6 +15,7 @@
             { "eight", '8'},
             { "nine", '9'}
         };
+
         private readonly string _inputFileName = string.Empty;
 
         public Puzzle02(string inputFileName)
