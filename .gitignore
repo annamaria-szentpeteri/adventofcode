@@ -1,0 +1,5 @@
+# vs and C# specific ignores
+.release/
+.vs/
+.obj/
+.bin/
