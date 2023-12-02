@@ -2,9 +2,7 @@
 {
     internal class Puzzle02 : IPuzzle<int>
     {
-        record NumberPosition(string Number, int Position);
-
-        private readonly Dictionary<string, char> _alphabeticDigits = new (){
+        private readonly Dictionary<string, char> _digitMapping = new (){
             { "one", '1'},
             { "two", '2'},
             { "three", '3'},
@@ -13,7 +11,16 @@
             { "six", '6'},
             { "seven", '7'},
             { "eight", '8'},
-            { "nine", '9'}
+            { "nine", '9'},
+            { "1", '1'},
+            { "2", '2'},
+            { "3", '3'},
+            { "4", '4'},
+            { "5", '5'},
+            { "6", '6'},
+            { "7", '7'},
+            { "8", '8'},
+            { "9", '9'}
         };
 
         private readonly string _inputFileName = string.Empty;
@@ -36,98 +43,61 @@
                 if (string.IsNullOrEmpty(line))
                     continue;
 
-                char firstNumericChar = '0';
-                bool foundFirst = false;
+                char firstDigit = FindFirstDigit(line);
+                char lastDigit = FindLastDigit(line);
 
-                char lastNumericChar = '0';
-                bool foundLast = false;
-
-                for (int index = 0; index < line.Length; index++)
-                {
-                    var indexFromEnd = line.Length - index - 1;
-
-                    if (!foundFirst && char.IsDigit(line[index]))
-                    {
-                        firstNumericChar = GetFirstDigit(line, index);
-                        foundFirst = true;
-                    }
-
-                    if (!foundLast && char.IsDigit(line[indexFromEnd]))
-                    {
-                        lastNumericChar = GetLastDigit(line, indexFromEnd);
-                        foundLast = true;
-                    }
-
-                    if (foundFirst && foundLast)
-                    {
-                        result += int.Parse(string.Concat(firstNumericChar, lastNumericChar));
-                        break;
-                    }
-                }
+                result += GetNumberFromDigits(firstDigit, lastDigit);
             }
 
             return result;
         }
 
-        private char GetFirstDigit(string line, int index)
+        private static int GetNumberFromDigits(char firstDigit, char secondDigit)
         {
-            var alphabeticDigit = FindFirstAlphabeticNumber(line);
-            return IsAlphabeticFirst(alphabeticDigit, index) ? GetDigit(alphabeticDigit!) : line[index];
+            return int.Parse(string.Concat(firstDigit, secondDigit));
         }
 
-        private char GetLastDigit(string line, int index)
+        private char FindFirstDigit(string line)
         {
-            var alphabeticDigit = FindLastAlphabeticNumber(line);
-            return IsAlphabeticLast(alphabeticDigit, index) ? GetDigit(alphabeticDigit!) : line[index];
-        }
+            int position = line.Length;
+            string number = string.Empty;
 
-        private char GetDigit(NumberPosition alphabeticDigit)
-        {
-            return _alphabeticDigits[alphabeticDigit!.Number];
-        }
-
-        private static bool IsAlphabeticFirst(NumberPosition? alphabeticDigit, int index)
-        {
-            return alphabeticDigit != null && alphabeticDigit.Position < index;
-        }
-
-        private static bool IsAlphabeticLast(NumberPosition? alphabeticDigit, int index)
-        {
-            return alphabeticDigit != null && alphabeticDigit.Position > index;
-        }
-
-        private NumberPosition? FindFirstAlphabeticNumber(string line)
-        {
-            var foundAt = new List<NumberPosition>();
-
-            foreach (string s in _alphabeticDigits.Keys)
+            foreach (string key in _digitMapping.Keys)
             {
-                var i = line.IndexOf(s);
+                var index = line.IndexOf(key);
 
-                if (i != -1)
+                if (index != -1 && index < position)
                 {
-                    foundAt.Add(new NumberPosition(s, i));
+                    position = index;
+                    number = key;
                 }
             }
 
-            return foundAt.OrderBy(x => x.Position).FirstOrDefault();
+            return GetDigit(number);
         }
 
-        private NumberPosition? FindLastAlphabeticNumber(string line)
+        private char FindLastDigit(string line)
         {
-            var foundAt = new List<NumberPosition>();
+            int position = -1;
+            string number = string.Empty;
 
-            foreach (string s in _alphabeticDigits.Keys)
+            foreach (string key in _digitMapping.Keys)
             {
-                var i = line.LastIndexOf(s);
+                var index = line.LastIndexOf(key);
 
-                if (i != -1)
+                if (index != -1 && index > position)
                 {
-                    foundAt.Add(new NumberPosition(s, i));
+                    position = index;
+                    number = key;
                 }
             }
 
-            return foundAt.OrderBy(x => x.Position).LastOrDefault();
+            return GetDigit(number);
+        }
+
+        private char GetDigit(string number)
+        {
+            return _digitMapping[number];
         }
     }
 }
