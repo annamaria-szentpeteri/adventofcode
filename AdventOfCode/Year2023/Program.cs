@@ -1,49 +1,107 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using System.Text;
+using Year2023.Exceptions;
+using Year2023.Solutions;
 
-using Year2023;
+namespace Year2023;
 
-try
+public class Program
 {
-    var success = false;
-
-    while (!success)
+    private static void Main()
     {
-        Console.WriteLine("Please provide which puzzle's result you want to see! (number of puzzle)");
-        success = int.TryParse(Console.ReadLine(), out var puzzleNumber);
-
-        if (!success)
+        try
         {
-            Console.WriteLine("Invalid input.");
-            continue;
+            while (true)
+            {
+                var dayNumber = GetDayNumber();
+                var puzzleNumber = GetPuzzleNumber();
+                bool useExampleInput = GetUseExampleInput();
+
+                try
+                {
+                    SolvePuzzle(dayNumber, puzzleNumber, useExampleInput);
+                    return;
+                }
+                catch (TypeWasNotFoundException)
+                {
+                    Console.WriteLine("Puzzle was not found. Day number must be between 01-24. Puzzle number must be 1 or 2.");
+                }
+                catch (InstanceCouldNotBeCreatedException)
+                {
+                    Console.WriteLine($"Could not create puzzle instance.");
+                }
+                catch (InstanceIsNotIPuzzleCreatedException)
+                {
+                    Console.WriteLine($"Puzzle instance does not implement IPuzzle interface.");
+                }
+
+                Console.WriteLine("------------------------------------------");
+            }
         }
-
-        switch (puzzleNumber)
+        catch (Exception e)
         {
-            case 1:
-                {
-                    var puzzle = new Puzzle01("input01.txt");
-                    var solution = puzzle.SolvePuzzle();
-                    Console.WriteLine($"Solution for puzzle #{puzzleNumber} is {solution}");
-                    break;
-                }
-            case 2:
-                {
-                    var puzzle = new Puzzle02("input01.txt");
-                    var solution = puzzle.SolvePuzzle();
-                    Console.WriteLine($"Solution for puzzle #{puzzleNumber} is {solution}");
-                    break;
-                }
-            default:
-                {
-                    Console.WriteLine("Invalid input. Number must be between 1-24.");
-                    success = false;
-                    break;
-                }
+            Console.WriteLine("Unexpected error happened:");
+            Console.WriteLine(e);
         }
     }
-}
-catch (Exception e)
-{
-    Console.WriteLine("Unexpected error happened:");
-    Console.WriteLine(e);
+
+    private static bool GetUseExampleInput()
+    {
+        Console.WriteLine("Would you like to solve the puzzle againts the example input? (y/n)");
+        return Console.ReadLine() == "y";
+    }
+
+    private static string? GetPuzzleNumber()
+    {
+        Console.WriteLine("Please provide if the 1st or the 2nd puzzle's result you want to see! (1 or 2)");
+        return Console.ReadLine();
+    }
+
+    private static string? GetDayNumber()
+    {
+        Console.WriteLine("Please provide which day's puzzle's result you want to see! (number of day with 2 digits)");
+        return Console.ReadLine();
+    }
+
+    private static void SolvePuzzle(string? dayNumber, string? puzzleNumber, bool useExampleInput)
+    {
+        var puzzle = CreatePuzzle(dayNumber, puzzleNumber, useExampleInput);
+
+        var result = puzzle.SolvePuzzle();
+        Console.WriteLine($"Solution for day {dayNumber} puzzle {puzzleNumber} is {result}");
+    }
+
+    private static IPuzzle CreatePuzzle(string? dayNumber, string? puzzleNumber, bool useExampleInput)
+    {
+        var inputFile = GetInputFilePath(dayNumber, useExampleInput);
+        object? instance = GetPuzzleInstance(dayNumber, puzzleNumber, inputFile);
+
+        if (instance == null) throw new InstanceCouldNotBeCreatedException();
+        if (instance is not IPuzzle) throw new InstanceIsNotIPuzzleCreatedException();
+
+        return (IPuzzle)instance;
+    }
+
+    private static object? GetPuzzleInstance(string? dayNumber, string? puzzleNumber, string inputFile)
+    {
+        var t = Type.GetType($"{typeof(IPuzzle).Namespace}.PuzzleDay{dayNumber}_{puzzleNumber}");
+        return t == null 
+            ? throw new TypeWasNotFoundException() 
+            : Activator.CreateInstance(t, new object[] { inputFile });
+    }
+
+    private static string GetInputFilePath(string? dayNumber, bool useExampleInput)
+    {
+        var stringBuilder = new StringBuilder();
+
+        stringBuilder.Append(@"files\");
+
+        if (useExampleInput)
+            stringBuilder.Append(@"example_");
+
+        stringBuilder.Append(@"inputs\day_");
+        stringBuilder.Append(dayNumber);
+        stringBuilder.Append(@".txt");
+
+        return stringBuilder.ToString();
+    }
 }

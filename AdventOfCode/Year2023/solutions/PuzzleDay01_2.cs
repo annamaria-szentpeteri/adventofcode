@@ -1,8 +1,8 @@
-﻿namespace Year2023
+﻿namespace Year2023.Solutions
 {
-    internal class Puzzle02 : IPuzzle<int>
+    internal class PuzzleDay01_2 : IPuzzle
     {
-        private readonly Dictionary<string, char> _digitMapping = new (){
+        private readonly Dictionary<string, char> _digitMapping = new(){
             { "one", '1'},
             { "two", '2'},
             { "three", '3'},
@@ -25,7 +25,7 @@
 
         private readonly string _inputFileName = string.Empty;
 
-        public Puzzle02(string inputFileName)
+        public PuzzleDay01_2(string inputFileName)
         {
             _inputFileName = inputFileName;
         }

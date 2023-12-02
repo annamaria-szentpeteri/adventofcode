@@ -1,10 +1,10 @@
-﻿namespace Year2023
+﻿namespace Year2023.Solutions
 {
-    internal class Puzzle01 : IPuzzle<int>
+    public class PuzzleDay01_1 : IPuzzle
     {
         private readonly string _inputFileName = string.Empty;
 
-        public Puzzle01(string inputFileName)
+        public PuzzleDay01_1(string inputFileName)
         {
             _inputFileName = inputFileName;
         }
