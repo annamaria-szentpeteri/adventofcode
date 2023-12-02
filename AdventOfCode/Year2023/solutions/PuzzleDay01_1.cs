@@ -1,56 +1,55 @@
-﻿namespace Year2023.Solutions
+﻿namespace Year2023.Solutions;
+
+internal class PuzzleDay01_1 : IPuzzle
 {
-    internal class PuzzleDay01_1 : IPuzzle
+    private readonly string _inputFileName = string.Empty;
+
+    public PuzzleDay01_1(string inputFileName)
     {
-        private readonly string _inputFileName = string.Empty;
+        _inputFileName = inputFileName;
+    }
 
-        public PuzzleDay01_1(string inputFileName)
+    public int SolvePuzzle()
+    {
+        var result = 0;
+
+        using var file = File.OpenText(_inputFileName);
+
+        while (!file.EndOfStream)
         {
-            _inputFileName = inputFileName;
-        }
+            var line = file.ReadLine();
 
-        public int SolvePuzzle()
-        {
-            var result = 0;
+            if (string.IsNullOrEmpty(line))
+                continue;
 
-            using var file = File.OpenText(_inputFileName);
+            char firstNumericChar = '0';
+            bool foundFirst = false;
 
-            while (!file.EndOfStream)
+            char lastNumericChar = '0';
+            bool foundLast = false;
+
+            for (int i = 0; i < line.Length; i++)
             {
-                var line = file.ReadLine();
-
-                if (string.IsNullOrEmpty(line))
-                    continue;
-
-                char firstNumericChar = '0';
-                bool foundFirst = false;
-
-                char lastNumericChar = '0';
-                bool foundLast = false;
-
-                for (int i = 0; i < line.Length; i++)
+                if (!foundFirst && char.IsDigit(line[i]))
                 {
-                    if (!foundFirst && char.IsDigit(line[i]))
-                    {
-                        firstNumericChar = line[i];
-                        foundFirst = true;
-                    }
+                    firstNumericChar = line[i];
+                    foundFirst = true;
+                }
 
-                    if (!foundLast && char.IsDigit(line[line.Length - i - 1]))
-                    {
-                        lastNumericChar = line[line.Length - i - 1];
-                        foundLast = true;
-                    }
+                if (!foundLast && char.IsDigit(line[line.Length - i - 1]))
+                {
+                    lastNumericChar = line[line.Length - i - 1];
+                    foundLast = true;
+                }
 
-                    if (foundFirst && foundLast)
-                    {
-                        result += int.Parse(string.Concat(firstNumericChar, lastNumericChar));
-                        break;
-                    }
+                if (foundFirst && foundLast)
+                {
+                    result += int.Parse(string.Concat(firstNumericChar, lastNumericChar));
+                    break;
                 }
             }
-
-            return result;
         }
+
+        return result;
     }
 }

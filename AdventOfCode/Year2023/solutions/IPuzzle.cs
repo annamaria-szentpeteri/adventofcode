@@ -1,7 +1,6 @@
-﻿namespace Year2023.Solutions
+﻿namespace Year2023.Solutions;
+
+public interface IPuzzle
 {
-    public interface IPuzzle
-    {
-        public int SolvePuzzle();
-    }
+    public int SolvePuzzle();
 }
