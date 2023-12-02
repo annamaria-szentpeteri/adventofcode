@@ -4,7 +4,7 @@ namespace Year2023.Solutions
 {
     internal class PuzzleDay02_2: IPuzzle
     {
-        private record Reveal(int RedCubes, int GreenCubes, int BlueCubes);
+        private record Reveal(int Red, int Green, int Blue);
         private record Game(int GameID, List<Reveal> Reveals);
 
         private readonly string _inputFileName = string.Empty;
@@ -40,13 +40,7 @@ namespace Year2023.Solutions
             var sections = line.Split(new char[] { ':', ';' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
             var gameID = GetGameID(sections[0]);
-
-            var reveals = new List<Reveal>(sections.Length - 1);
-            for (int i = 1; i < sections.Length; i++)
-            {
-                var reveal = CreateReveal(sections[i]);
-                reveals.Add(reveal);
-            }
+            var reveals = GetReveals(sections.Skip(1));
 
             return new Game(gameID, reveals);
         }
@@ -54,6 +48,19 @@ namespace Year2023.Solutions
         private static int GetGameID(string input)
         {
             return int.Parse(input[input.IndexOf(' ')..]);
+        }
+
+        private static List<Reveal> GetReveals(IEnumerable<string> sections)
+        {
+            var reveals = new List<Reveal>(sections.Count());
+
+            foreach (var section in sections)
+            {
+                var reveal = CreateReveal(section);
+                reveals.Add(reveal);
+            }
+
+            return reveals;
         }
 
         private static Reveal CreateReveal(string input)
@@ -68,23 +75,23 @@ namespace Year2023.Solutions
                 {
                     var sections = x.Split(' ');
                     var colour = sections[1];
-                    var cubeCount = int.Parse(sections[0]);
+                    var count = int.Parse(sections[0]);
 
                     switch (colour)
                     {
                         case "red":
                             {
-                                red = cubeCount;
+                                red = count;
                                 break;
                             }
                         case "green":
                             {
-                                green = cubeCount;
+                                green = count;
                                 break;
                             }
                         case "blue":
                             {
-                                blue = cubeCount;
+                                blue = count;
                                 break;
                             }
                         default:
@@ -97,9 +104,9 @@ namespace Year2023.Solutions
 
         private static int GetPower(Game game)
         {
-            int red = game.Reveals.MaxBy(x => x.RedCubes)!.RedCubes;
-            int green = game.Reveals.MaxBy(x => x.GreenCubes)!.GreenCubes;
-            int blue = game.Reveals.MaxBy(x => x.BlueCubes)!.BlueCubes;
+            int red = game.Reveals.MaxBy(x => x.Red)!.Red;
+            int green = game.Reveals.MaxBy(x => x.Green)!.Green;
+            int blue = game.Reveals.MaxBy(x => x.Blue)!.Blue;
 
             return (red == 0 ? 1 : red) * (green == 0 ? 1 : green) * (blue == 0 ? 1 : blue);
         }

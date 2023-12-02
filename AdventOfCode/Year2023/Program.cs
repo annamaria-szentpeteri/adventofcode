@@ -85,7 +85,7 @@ public class Program
     {
         var t = Type.GetType($"{typeof(IPuzzle).Namespace}.PuzzleDay{dayNumber}_{puzzleNumber}");
         return t == null 
-            ? throw new TypeWasNotFoundException() 
+            ? throw new TypeWasNotFoundException()
             : Activator.CreateInstance(t, new object[] { inputFile });
     }
 
