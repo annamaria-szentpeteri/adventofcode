@@ -12,6 +12,9 @@ public class Program
         {
             while (true)
             {
+                Console.WriteLine("****** Welcome to Advent of Code 2023 ******");
+                Console.WriteLine();
+
                 var dayNumber = GetDayNumber();
                 var puzzleNumber = GetPuzzleNumber();
                 bool useExampleInput = GetUseExampleInput();
