@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Annamária Szentpéteri",
+  "classifications": [ "Console" ], 
+  "name": "Advent of Code",
+  "identity": "CustomTemplate",         
+  "groupIdentity":"CustomTemplate",
+  "shortName": "aoc",
+  "tags": {
+    "language": "C#",
+    "type":"project"
+  },
+  "sourceName": "Template",
+  "preferNameDirectory":true,
+  "symbols":{
+    "year": {
+      "type": "parameter",
+	  "displayName": "Year of AoC",
+      "defaultValue": "2023",
+      "replaces":"20XX"
+    }
+  }
+}
