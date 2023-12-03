@@ -10,6 +10,16 @@
 
 Made in Visual Studio 2022 with .Net 8.
 
+Template can be installed with the following command to create base project for any year:
+```
+ dotnet new install .\aoc_project_template\
+```
+After this template should be available when creating a new project. Template contains:
+* empty example input files for all 25 days,
+* empty input files for all 25 days,
+* template classes for all 25 days and their 2 tasks,
+* main program class that is ready to run and execute puzzle solutions.
+
 ## Progress
 
 * [**2015**](https://adventofcode.com/2015) - not started
