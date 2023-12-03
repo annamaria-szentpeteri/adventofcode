@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Year2023.Solutions;
 
@@ -19,14 +18,14 @@ internal class PuzzleDay03_1 : IPuzzle
         using var file = File.OpenText(_inputFileName);
 
         var text = file.ReadLine()!;
-        var dimension = text.Length;
+        var dimension = text.Length + Environment.NewLine.Length;
         text += Environment.NewLine + file.ReadToEnd().Trim().ReplaceLineEndings();
 
         var numbers = Regex.Matches(text, @"[\d]+").Select(x => new Tuple<int, string>(x.Index, x.Value));
         
         foreach(var number in numbers)
         {
-            result += IsPartNumber(number.Item1, number.Item2.Length, dimension + Environment.NewLine.Length, text) ? int.Parse(number.Item2) : 0; 
+            result += IsPartNumber(number.Item1, number.Item2.Length, dimension, text) ? int.Parse(number.Item2) : 0; 
         }
 
         return result;
